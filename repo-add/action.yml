@@ -12,22 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Helm Install
-description: Runs helm install command.
+name: Helm Add Repository
+description: Runs helm repo add command.
 inputs:
   name:
-    description: The chart installation name.
+    description: The repository name.
     required: true
-  chart:
-    description: |
-      The chart to be installed. It must be a chart reference, a path to a
-      packaged chart, a path to an unpacked chart directory or a URL.
+  url:
+    description: The repository URL.
     required: true
   flags:
     description: |
       The flags to be passed to the Helm command. One flag per line is
       accepted.
     required: false
+  update:
+    description: Whether to run helm repo update or not.
+    required: false
+    default: false
 outputs: {}
 runs:
   using: composite
@@ -35,5 +37,11 @@ runs:
   - run: |-
       set -o errexit -o nounset
       flags=(${{ inputs.flags }})
-      helm install "${{ inputs.name }}" "${{ inputs.chart }}" "${flags[@]}"
+      helm repo add "${{ inputs.name }}" "${{ inputs.url }}" "${flags[@]}"
+    shell: bash
+  - run: |-
+      set -o errexit
+      if [[ "${{ inputs.update }}" == "true" ]]; then
+        helm repo update
+      fi
     shell: bash
