@@ -28,8 +28,7 @@ inputs:
     required: false
   update:
     description: Whether to run helm repo update or not.
-    required: false
-    default: false
+    default: 'false'
 outputs: {}
 runs:
   using: composite
